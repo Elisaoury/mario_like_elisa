@@ -22,7 +22,8 @@ export class zone_1 extends Phaser.Scene {
         this.load.spritesheet('ennemi', 'assets/renard.png',
             { frameWidth: 1400, frameHeight: 700});
         
-            
+        this.load.image('planteToxique', 'assets/planteToxique.png'); 
+        this.load.image('fleur', 'assets/fleur.png');   
         
        
 
@@ -42,7 +43,9 @@ export class zone_1 extends Phaser.Scene {
     box;
     menuOpen = false;
     herbe;
-    score = 0;
+    score1 = 0;
+    score2 = 0;
+    fleur;
 
 
 
@@ -117,18 +120,31 @@ export class zone_1 extends Phaser.Scene {
         this.ennemy9.setCollideWorldBounds(true);
 
 
-        //this.ennemy5= this.ennemis.create(200, 2800, 'ennemi').setScale(0.07);
-        //this.ennemy5.setBounce(0.2);
-        //fdthis.ennemy5.setCollideWorldBounds(true);
+
+
+        //this.planteToxique = this.physics.add.group();
+        
+        this.planteToxique1= this.ennemis.create(1088, 2950, 'planteToxique').setScale(0.2);
+        this.planteToxique1.setBounce(0.2);
+        this.planteToxique1.setCollideWorldBounds(true);
+        
       
         
      
     // collectible herbe 
+        this.scoreText = this.physics.add.group();
 
-        this.scoreText = this.add.text(355,285,'0',{fontSize:'32px',fill:'#000'});
-        this.scoreText.setScrollFactor(0);
-        this.scoreText.setDepth(15);
-        this.scoreText.setVisible(false);
+        this.scoreText1 = this.add.text(355,285,'0',{fontSize:'32px',fill:'#000'});
+        this.scoreText1.setScrollFactor(0);
+        this.scoreText1.setDepth(15);
+        this.scoreText1.setVisible(false);
+
+
+
+        this.scoreText2 = this.add.text(355,350,'0',{fontSize:'32px',fill:'#000'});
+        this.scoreText2.setScrollFactor(0);
+        this.scoreText2.setDepth(15);
+        this.scoreText2.setVisible(false);
 
  
         this.herbe = this.physics.add.group();
@@ -141,6 +157,14 @@ export class zone_1 extends Phaser.Scene {
         this.herbe5 = this.herbe.create(10500,2800, "herbe");
         this.herbe5 = this.herbe.create(11950,800, "herbe");
         this.physics.add.overlap(this.player, this.herbe, this.collectHerbe, null, this);
+
+        
+
+        this.fleur = this.physics.add.group();
+
+        this.fleur1 = this.fleur.create(200, 800, "fleur").setScale(0.07);
+        
+        this.physics.add.overlap(this.player, this.fleur, this.collectFleur, null, this);
 
 
         //menu
@@ -169,6 +193,7 @@ export class zone_1 extends Phaser.Scene {
         this.physics.add.collider(this.player, this.calque_plateforme);
 
         this.physics.add.collider(this.herbe, this.calque_plateforme);
+        this.physics.add.collider(this.fleur, this.calque_plateforme);
         this.physics.add.collider(this.ennemis, this.calque_plateforme);
         
         // clavier 
@@ -277,21 +302,29 @@ export class zone_1 extends Phaser.Scene {
         }
         if (this.menuOpen === false){
             this.menu.setVisible(false)
-            this.scoreText.setVisible(false)
+            this.scoreText1.setVisible(false)
         }
         else {
             this.menu.setVisible(true)
-            this.scoreText.setVisible(true)
+            this.scoreText1.setVisible(true)
         }
         
+        if (this.menuOpen === false){
+            this.menu.setVisible(false)
+            this.scoreText2.setVisible(false)
+        }
+        else {
+            this.menu.setVisible(true)
+            this.scoreText2.setVisible(true)
+        }
 
         if (this.ennemy1) {
             if (this.ennemy1.x <1089) {
-              this.ennemy1.setVelocityX(500);
+              this.ennemy1.setVelocityX(400);
               this.ennemy1.anims.play('ennemi_right', true);
             } 
             else if (this.ennemy1.x > 2500) {
-              this.ennemy1.setVelocityX(-500);
+              this.ennemy1.setVelocityX(-400);
               this.ennemy1.anims.play('ennemi_left', true);
             }
         }
@@ -394,19 +427,22 @@ export class zone_1 extends Phaser.Scene {
                     this.killplayer();
         }
 
-
-    
-
-
-
     }
 
 
     collectHerbe(player, herbe){
         herbe.disableBody(true, true); 
-        this.score += 1  ; 
-        this.scoreText.setText(this.score);
+        this.score1 += 1  ; 
+        this.scoreText1.setText(this.score1);
         }
+
+
+    collectFleur(player, fleur){
+        fleur.disableBody(true, true); 
+        this.score2 += 1  ; 
+        this.scoreText2.setText(this.score2);
+        }
+    
 
     leClick(){
         //this.menu.setVisible(true);
