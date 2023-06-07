@@ -10,6 +10,9 @@ export class zone_1 extends Phaser.Scene {
 
     preload() {
 
+        this.load.audio('background_1', 'assets/background_1.mp3')
+        this.load.audio('background_2', 'assets/background_2.mp3')
+        this.load.audio('background_3', 'assets/background_3.mp3')
         this.load.spritesheet('perso_droite', 'assets/perso_droite.png',
             { frameWidth: 280, frameHeight: 400 });
         this.load.spritesheet('perso_gauche', 'assets/perso_gauche.png',
@@ -23,7 +26,10 @@ export class zone_1 extends Phaser.Scene {
             { frameWidth: 1400, frameHeight: 700});
         
         this.load.image('planteToxique', 'assets/planteToxique.png'); 
-        this.load.image('fleur', 'assets/fleur.png');   
+        this.load.image('fleur', 'assets/fleur.png');  
+        this.load.image('baie', 'assets/baie.png');   
+        this.load.image('eau', 'assets/eau.png');  
+         
         
        
 
@@ -43,14 +49,23 @@ export class zone_1 extends Phaser.Scene {
     box;
     menuOpen = false;
     herbe;
+    fleur;
+    baie;
+    nbHerbe = 0;
+    nbFleur = 0
+    nbBaie = 0
+    eau = false;
+    potion = false;
     score1 = 0;
     score2 = 0;
-    fleur;
 
 
 
     create() {
 
+        var musique_de_fond;
+        musique_de_fond = this.sound.add('background_1'); 
+        musique_de_fond.play();
         this.game_over = false;
 
         // tiled
@@ -119,18 +134,28 @@ export class zone_1 extends Phaser.Scene {
         this.ennemy9.setBounce(0.2);
         this.ennemy9.setCollideWorldBounds(true);
 
+        this.ennemy10= this.ennemis.create(10000, 1900, 'ennemi').setScale(0.07);
+        this.ennemy10.setBounce(0.2);
+        this.ennemy10.setCollideWorldBounds(true);
+
 
 
 
         //this.planteToxique = this.physics.add.group();
         
-        this.planteToxique1= this.ennemis.create(1088, 2950, 'planteToxique').setScale(0.2);
+        this.planteToxique1= this.ennemis.create(4200, 2500, 'planteToxique').setScale(0.15);
         this.planteToxique1.setBounce(0.2);
         this.planteToxique1.setCollideWorldBounds(true);
         
-      
+        this.planteToxique2= this.ennemis.create(4500, 2500, 'planteToxique').setScale(0.15);
+        this.planteToxique2.setBounce(0.2);
+        this.planteToxique2.setCollideWorldBounds(true);
         
-     
+        this.planteToxique3= this.ennemis.create(3300, 2500, 'planteToxique').setScale(0.15);
+        this.planteToxique3.setBounce(0.2);
+        this.planteToxique3.setCollideWorldBounds(true);
+
+
     // collectible herbe 
         this.scoreText = this.physics.add.group();
 
@@ -146,26 +171,45 @@ export class zone_1 extends Phaser.Scene {
         this.scoreText2.setDepth(15);
         this.scoreText2.setVisible(false);
 
+        this.scoreText3 = this.add.text(355,415,'0',{fontSize:'32px',fill:'#000'});
+        this.scoreText3.setScrollFactor(0);
+        this.scoreText3.setDepth(15);
+        this.scoreText3.setVisible(false);
+
  
         this.herbe = this.physics.add.group();
 
-        this.herbe1 = this.herbe.create(70, 800, "herbe");
-        this.herbe2 = this.herbe.create(4000,68, "herbe");
-        this.herbe3 = this.herbe.create(5250,2800, "herbe");
-        this.herbe4 = this.herbe.create(7000,1200, "herbe");
-        this.herbe5 = this.herbe.create(8600,80, "herbe");
-        this.herbe5 = this.herbe.create(10500,2800, "herbe");
-        this.herbe5 = this.herbe.create(11950,800, "herbe");
+        //this.herbe1 = this.herbe.create(70, 800, "herbe").setScale(0.05);
+        this.herbe2 = this.herbe.create(8500,20, "herbe").setScale(0.05);
         this.physics.add.overlap(this.player, this.herbe, this.collectHerbe, null, this);
 
         
 
         this.fleur = this.physics.add.group();
 
-        this.fleur1 = this.fleur.create(200, 800, "fleur").setScale(0.07);
+        
+        //this.fleur1 = this.fleur.create(4000,68, "fleur").setScale(0.07);
+        this.fleur2 = this.fleur.create(6900,1700, "fleur").setScale(0.07);
+        this.fleur3 = this.fleur.create(10500,800, "fleur").setScale(0.07);
+        this.fleur4 = this.fleur.create(250,2800, "fleur").setScale(0.07);
         
         this.physics.add.overlap(this.player, this.fleur, this.collectFleur, null, this);
 
+        this.baie = this.physics.add.group();
+
+        
+        this.baie1 = this.baie.create(25,1800, "baie").setScale(0.07);
+        this.baie2 = this.baie.create(11968,900, "baie").setScale(0.07);
+        
+        
+        this.physics.add.overlap(this.player, this.baie, this.collectBaie, null, this);
+
+        this.eau = this.physics.add.group();
+
+        
+        this.eau1 = this.eau.create(4000,68, "eau").setScale(0.07);
+        this.physics.add.overlap(this.player, this.eau, this.collectEau, null, this);
+        
 
         //menu
         this.menu = this.add.image(500, 400, "menu").setScale(0.7);
@@ -179,6 +223,14 @@ export class zone_1 extends Phaser.Scene {
             this.ui.on("pointerdown", this.leClick, this);
         }
         
+
+        //bouton
+
+        this.boutonPotion = this.add.text(750, 500, 'Créer la potion', { fill: '0xffffff' });
+        this.boutonPotion.setVisible(false);
+        this.boutonPotion.setScrollFactor(0);
+        this.boutonPotion.setInteractive();
+        this.boutonPotion.on("pointerdown", this.creerPotion, this);
 
 
         //boite 
@@ -194,6 +246,7 @@ export class zone_1 extends Phaser.Scene {
 
         this.physics.add.collider(this.herbe, this.calque_plateforme);
         this.physics.add.collider(this.fleur, this.calque_plateforme);
+        this.physics.add.collider(this.baie, this.calque_plateforme);
         this.physics.add.collider(this.ennemis, this.calque_plateforme);
         
         // clavier 
@@ -303,10 +356,12 @@ export class zone_1 extends Phaser.Scene {
         if (this.menuOpen === false){
             this.menu.setVisible(false)
             this.scoreText1.setVisible(false)
+            this.boutonPotion.setVisible(false);
         }
         else {
             this.menu.setVisible(true)
             this.scoreText1.setVisible(true)
+            this.boutonPotion.setVisible(true);
         }
         
         if (this.menuOpen === false){
@@ -317,13 +372,21 @@ export class zone_1 extends Phaser.Scene {
             this.menu.setVisible(true)
             this.scoreText2.setVisible(true)
         }
+        if (this.menuOpen === false){
+            this.menu.setVisible(false)
+            this.scoreText3.setVisible(false)
+        }
+        else {
+            this.menu.setVisible(true)
+            this.scoreText3.setVisible(true)
+        }
 
         if (this.ennemy1) {
             if (this.ennemy1.x <1089) {
               this.ennemy1.setVelocityX(400);
               this.ennemy1.anims.play('ennemi_right', true);
             } 
-            else if (this.ennemy1.x > 2500) {
+            else if (this.ennemy1.x > 2000) {
               this.ennemy1.setVelocityX(-400);
               this.ennemy1.anims.play('ennemi_left', true);
             }
@@ -414,9 +477,21 @@ export class zone_1 extends Phaser.Scene {
               this.ennemy9.setVelocityX(450);
               this.ennemy9.anims.play('ennemi_right', true);
             } 
-            else if (this.ennemy9.x > 11500) {
+            else if (this.ennemy9.x > 11900) {
               this.ennemy9.setVelocityX(-450);
               this.ennemy9.anims.play('ennemi_left', true);
+            }
+        }
+
+        
+        if (this.ennemy10) {
+            if (this.ennemy10.x <10001) {
+              this.ennemy10.setVelocityX(450);
+              this.ennemy10.anims.play('ennemi_right', true);
+            } 
+            else if (this.ennemy10.x > 11500) {
+              this.ennemy10.setVelocityX(-450);
+              this.ennemy10.anims.play('ennemi_left', true);
             }
         }
 
@@ -431,6 +506,7 @@ export class zone_1 extends Phaser.Scene {
 
 
     collectHerbe(player, herbe){
+        console.log("aled");
         herbe.disableBody(true, true); 
         this.score1 += 1  ; 
         this.scoreText1.setText(this.score1);
@@ -438,11 +514,20 @@ export class zone_1 extends Phaser.Scene {
 
 
     collectFleur(player, fleur){
+        console.log("heloo");
         fleur.disableBody(true, true); 
         this.score2 += 1  ; 
         this.scoreText2.setText(this.score2);
         }
-    
+     
+
+    collectBaie(player, baie){
+        baie.disableBody(true, true);
+        this.nbBaie += 1
+        this.scoreText3.setText(this.nbBaie);
+       
+        }
+
 
     leClick(){
         //this.menu.setVisible(true);
@@ -460,6 +545,10 @@ export class zone_1 extends Phaser.Scene {
         this.game_over = true;
         console.log("ça marche");
         this.scene.start("GameOver")
+    }
+
+    creerPotion(){
+        this.potion = true
     }
    
 }

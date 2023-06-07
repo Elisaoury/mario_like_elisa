@@ -31,7 +31,7 @@ export class zone_1 extends Phaser.Scene {
 
     create() {
 
-
+        musique_de_fond.stop();  
 
         // tiled
         this.carteDuNiveau = this.add.tilemap("map");

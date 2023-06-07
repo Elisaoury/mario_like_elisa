@@ -6,12 +6,16 @@ export class sceneDebut extends Phaser.Scene
     }
     preload(){
         this.load.image('debut','assets/debut.png');
+        
     }
     create(){
-        this.add.image(660,500,'debut').setScale(0.7);
+
+          
+        this.add.image(625,425,'debut').setScale(0.7);
         this.cameras.main.zoom= 1;
 
         this.cursors = this.input.keyboard.createCursorKeys();
+        
     }
     update() {
   if (this.cursors.space.isDown) {
@@ -24,7 +28,9 @@ export class sceneDebut extends Phaser.Scene
       })
     }
     this.click = false;
+      
   }
+  
 }
     
 };

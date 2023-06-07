@@ -7,8 +7,8 @@ var config =
 {
     type: Phaser.AUTO,
         scale:{
-            width: 1320, 
-            height: 1000,
+            width: 1200, 
+            height: 900,
 
     },
     
