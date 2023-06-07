@@ -10,9 +10,9 @@ export class zone_1 extends Phaser.Scene {
 
     preload() {
 
-        //this.load.audio('background_1', 'assets/background_1.mp3')
-        //this.load.audio('background_2', 'assets/background_2.mp3')
-        //this.load.audio('background_3', 'assets/background_3.mp3')
+        this.load.audio('background_1', 'assets/background_1.mp3')
+        this.load.audio('background_2', 'assets/background_2.mp3')
+        this.load.audio('background_3', 'assets/background_3.mp3')
         this.load.spritesheet('perso_droite', 'assets/perso_droite.png',
             { frameWidth: 280, frameHeight: 400 });
         this.load.spritesheet('perso_gauche', 'assets/perso_gauche.png',
@@ -27,7 +27,8 @@ export class zone_1 extends Phaser.Scene {
         this.load.image('baie', 'assets/baie.png');   
         this.load.image('eau', 'assets/eau.png'); 
         this.load.image('herbe', 'assets/herbe.png'); 
-         
+        this.load.image('potion', 'assets/potion.png');
+        this.load.image('potionMelanger', 'assets/potionMelanger.png');
         
        
 
@@ -44,7 +45,7 @@ export class zone_1 extends Phaser.Scene {
     platforms;
     player;
     cursors;
-    box;
+ 
     menuOpen = false;
     herbe;
     fleur;
@@ -54,16 +55,20 @@ export class zone_1 extends Phaser.Scene {
     nbBaie = 0
     eau = false;
     potion = false;
+    potion;
+    potionMelanger;
     score1 = 0;
     score2 = 0;
+    score3 = 0;
+    score4 = 0;
 
 
 
     create() {
 
-        //var musique_de_fond;
-        //musique_de_fond = this.sound.add('background_1'); 
-        //musique_de_fond.play();
+        var musique_de_fond;
+        musique_de_fond = this.sound.add('background_1'); 
+        musique_de_fond.play();
         this.game_over = false;
 
         // tiled
@@ -159,29 +164,33 @@ export class zone_1 extends Phaser.Scene {
         // scoretext
         this.scoreText = this.physics.add.group();
 
-        this.scoreText1 = this.add.text(355,285,'0',{fontSize:'32px',fill:'#000'});
+        this.scoreText1 = this.add.text(300,300,'0',{fontSize:'32px',fill:'#000'});
         this.scoreText1.setScrollFactor(0);
         this.scoreText1.setDepth(15);
         this.scoreText1.setVisible(false);
 
 
 
-        this.scoreText2 = this.add.text(355,350,'0',{fontSize:'32px',fill:'#000'});
+        this.scoreText2 = this.add.text(290,340,'0',{fontSize:'32px',fill:'#000'});
         this.scoreText2.setScrollFactor(0);
         this.scoreText2.setDepth(15);
         this.scoreText2.setVisible(false);
 
-        this.scoreText3 = this.add.text(355,415,'0',{fontSize:'32px',fill:'#000'});
+        this.scoreText3 = this.add.text(290,380,'0',{fontSize:'32px',fill:'#000'});
         this.scoreText3.setScrollFactor(0);
         this.scoreText3.setDepth(15);
         this.scoreText3.setVisible(false);
+
+        this.scoreText4 = this.add.text(290,420,'0',{fontSize:'32px',fill:'#000'});
+        this.scoreText4.setScrollFactor(0);
+        this.scoreText4.setDepth(15);
+        this.scoreText4.setVisible(false);
 
         //herbe
         this.herbe = this.physics.add.group();
 
         this.herbe1 = this.herbe.create(70, 800, "herbe").setScale(0.05);
         this.herbe2 = this.herbe.create(8500,20, "herbe").setScale(0.05);
-
         this.physics.add.overlap(this.player, this.herbe, this.collectHerbe, null, this);
 
         
@@ -191,25 +200,24 @@ export class zone_1 extends Phaser.Scene {
         this.fleur1 = this.fleur.create(6900,1700, "fleur").setScale(0.07);
         this.fleur2 = this.fleur.create(10500,1800, "fleur").setScale(0.07);
         this.fleur3 = this.fleur.create(4080,80, "fleur").setScale(0.07);
-
         this.physics.add.overlap(this.player, this.fleur, this.collectFleur, null, this);
 
         //baie
         this.baie = this.physics.add.group();
 
-        this.baie1 = this.baie.create(25,1800, "baie").setScale(0.07);
+        this.baie1 = this.baie.create(1700,80, "baie").setScale(0.07);
         this.baie2 = this.baie.create(11968,900, "baie").setScale(0.07);
         this.physics.add.overlap(this.player, this.baie, this.collectBaie, null, this);
 
+        //eau
         this.eau = this.physics.add.group();
 
-        //eau
+        
         this.eau1 = this.eau.create(4000,2800, "eau").setScale(0.07);
-
         this.physics.add.overlap(this.player, this.eau, this.collectEau, null, this);
         
 
-        //menu
+        //menuthis.eau.create(4000,2800, "eau").setScale(0.07);
         this.menu = this.add.image(500, 400, "menu").setScale(0.7);
         this.menu.setScrollFactor(0);
         this.menu.setVisible(false);
@@ -221,6 +229,15 @@ export class zone_1 extends Phaser.Scene {
             this.ui.on("pointerdown", this.leClick, this);
         }
         
+        //potion
+
+        this.laPotion = this.add.image(825, 300, "potion").setScale(0.3 );
+        this.laPotion.setScrollFactor(0);
+        this.laPotion.setVisible(false);
+
+        this.laPotionMelanger = this.add.image(827, 302, "potionMelanger").setScale(0.3) ;
+        this.laPotionMelanger.setScrollFactor(0);
+        this.laPotionMelanger.setVisible(true);
 
         //bouton
 
@@ -231,9 +248,11 @@ export class zone_1 extends Phaser.Scene {
         this.boutonPotion.on("pointerdown", this.creerPotion, this);
 
 
+        
+
+
         //boite 
-        this.box = this.physics.add.sprite(200, 260, 'box');
-        this.box.setCollideWorldBounds(true);
+        
 
 
         // définition des tuiles de plateformes qui sont solides
@@ -253,7 +272,7 @@ export class zone_1 extends Phaser.Scene {
         this.cursors = this.input.keyboard.createCursorKeys()
 
 
-        this.physics.add.collider(this.player, this.box);
+        
         // redimentionnement du monde avec les dimensions calculées via tiled
         this.physics.world.setBounds(0, 0, 12000,3050);
         //  ajout du champs de la caméra de taille identique à celle du monde
@@ -263,8 +282,7 @@ export class zone_1 extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
  
 
-        this.physics.add.collider(this.player, this.box);
-        this.physics.add.collider(this.box, this.calque_plateforme);
+        
      
 
         // animation personnage
@@ -335,7 +353,7 @@ export class zone_1 extends Phaser.Scene {
         this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
         this.keyJump = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
         
-
+        // bouton de deplacement 
         if (this.keyJump.isDown && this.player.body.blocked.down) {
             this.player.setVelocityY(-550);
             //    player.anims.play('jump', true);
@@ -352,34 +370,52 @@ export class zone_1 extends Phaser.Scene {
             this.player.setVelocityX(0);
             this.player.anims.play('turn');
         }
+
+        // menu         
+
         if (this.menuOpen === false){
             this.menu.setVisible(false)
             this.scoreText1.setVisible(false)
             this.boutonPotion.setVisible(false);
+            this.laPotion.setVisible(false);
+            this.laPotionMelanger.setVisible(false);
         }
         else {
             this.menu.setVisible(true)
             this.scoreText1.setVisible(true)
             this.boutonPotion.setVisible(true);
+            this.laPotion.setVisible(true);
+            this.laPotionMelanger.setVisible(false);
+        
+        }
+    
+        if (this.menuOpen === false){
+            this.menu.setVisible(false)
+            this.scoreText1.setVisible(false)
+            this.scoreText2.setVisible(false)
+            this.scoreText3.setVisible(false)
+            this.scoreText4.setVisible(false)
+            this.laPotion.setVisible(false);
+            this.laPotionMelanger.setVisible(false);
+        }
+        else {
+            this.menu.setVisible(true)
+            this.scoreText1.setVisible(true)
+            this.scoreText2.setVisible(true) 
+            this.scoreText3.setVisible(true)
+            this.scoreText4.setVisible(true)
+            
         }
         
-        if (this.menuOpen === false){
-            this.menu.setVisible(false)
-            this.scoreText2.setVisible(false)
-        }
-        else {
-            this.menu.setVisible(true)
-            this.scoreText2.setVisible(true)
-        }
-        if (this.menuOpen === false){
-            this.menu.setVisible(false)
-            this.scoreText3.setVisible(false)
-        }
-        else {
-            this.menu.setVisible(true)
-            this.scoreText3.setVisible(true)
-        }
 
+        if (this.potion === true){
+            this.laPotionMelanger.setVisible(true);
+            this.laPotion.setVisible(false);
+        }
+        if (this.menuOpen === false){
+            this.laPotionMelanger.setVisible(false);
+        }
+       
         if (this.ennemy1) {
             if (this.ennemy1.x <1089) {
               this.ennemy1.setVelocityX(400);
@@ -510,22 +546,29 @@ export class zone_1 extends Phaser.Scene {
         this.score1 += 1  ; 
         this.scoreText1.setText(this.score1);
         }
-
-
-    collectFleur(player, fleur){
-        console.log("heloo");
-        fleur.disableBody(true, true); 
-        this.score2 += 1  ; 
-        this.scoreText2.setText(this.score2);
-        }
      
 
     collectBaie(player, baie){
-        baie.disableBody(true, true);
-        this.nbBaie += 1
-        this.scoreText3.setText(this.nbBaie);
-       
+        console.log("heloo");
+        baie.disableBody(true, true); 
+        this.score3 += 1  ; 
+        this.scoreText3.setText(this.score3);
         }
+
+    collectFleur(player, baie){
+        console.log("heloo");
+        baie.disableBody(true, true); 
+        this.score4 += 1  ; 
+        this.scoreText2.setText(this.score4);
+        }
+
+    collectEau(player, eau){
+        console.log("heloo");
+        eau.disableBody(true, true); 
+        this.score2 += 1  ; 
+        this.scoreText4.setText(this.score2);
+        }
+        
 
 
     leClick(){
@@ -547,8 +590,10 @@ export class zone_1 extends Phaser.Scene {
     }
 
     creerPotion(){
-
+        if (this.score1 == 2 && this.score4 == 3 && this.score2 == 1 && this.score3 == 2){
         this.potion = true
+        console.log("potion faite !");
+        }
     }
    
 }
