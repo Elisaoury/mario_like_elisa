@@ -10,16 +10,13 @@ export class zone_1 extends Phaser.Scene {
 
     preload() {
 
-        this.load.audio('background_1', 'assets/background_1.mp3')
-        this.load.audio('background_2', 'assets/background_2.mp3')
-        this.load.audio('background_3', 'assets/background_3.mp3')
+        //this.load.audio('background_1', 'assets/background_1.mp3')
+        //this.load.audio('background_2', 'assets/background_2.mp3')
+        //this.load.audio('background_3', 'assets/background_3.mp3')
         this.load.spritesheet('perso_droite', 'assets/perso_droite.png',
             { frameWidth: 280, frameHeight: 400 });
         this.load.spritesheet('perso_gauche', 'assets/perso_gauche.png',
             { frameWidth: 280, frameHeight: 400 });
-        this.load.image('box', 'assets/box.png');
-        this.load.image('box','assets/box');
-        this.load.image('herbe', 'assets/herbe.png');
         this.load.image("book", "assets/ui.png");
         this.load.image("menu", "assets/menu.png");
         this.load.spritesheet('ennemi', 'assets/renard.png',
@@ -28,7 +25,8 @@ export class zone_1 extends Phaser.Scene {
         this.load.image('planteToxique', 'assets/planteToxique.png'); 
         this.load.image('fleur', 'assets/fleur.png');  
         this.load.image('baie', 'assets/baie.png');   
-        this.load.image('eau', 'assets/eau.png');  
+        this.load.image('eau', 'assets/eau.png'); 
+        this.load.image('herbe', 'assets/herbe.png'); 
          
         
        
@@ -63,9 +61,9 @@ export class zone_1 extends Phaser.Scene {
 
     create() {
 
-        var musique_de_fond;
-        musique_de_fond = this.sound.add('background_1'); 
-        musique_de_fond.play();
+        //var musique_de_fond;
+        //musique_de_fond = this.sound.add('background_1'); 
+        //musique_de_fond.play();
         this.game_over = false;
 
         // tiled
@@ -156,7 +154,9 @@ export class zone_1 extends Phaser.Scene {
         this.planteToxique3.setCollideWorldBounds(true);
 
 
-    // collectible herbe 
+    // collectible  
+
+        // scoretext
         this.scoreText = this.physics.add.group();
 
         this.scoreText1 = this.add.text(355,285,'0',{fontSize:'32px',fill:'#000'});
@@ -176,38 +176,36 @@ export class zone_1 extends Phaser.Scene {
         this.scoreText3.setDepth(15);
         this.scoreText3.setVisible(false);
 
- 
+        //herbe
         this.herbe = this.physics.add.group();
 
-        //this.herbe1 = this.herbe.create(70, 800, "herbe").setScale(0.05);
+        this.herbe1 = this.herbe.create(70, 800, "herbe").setScale(0.05);
         this.herbe2 = this.herbe.create(8500,20, "herbe").setScale(0.05);
+
         this.physics.add.overlap(this.player, this.herbe, this.collectHerbe, null, this);
 
         
-
+        //fleur
         this.fleur = this.physics.add.group();
 
-        
-        //this.fleur1 = this.fleur.create(4000,68, "fleur").setScale(0.07);
-        this.fleur2 = this.fleur.create(6900,1700, "fleur").setScale(0.07);
-        this.fleur3 = this.fleur.create(10500,800, "fleur").setScale(0.07);
-        this.fleur4 = this.fleur.create(250,2800, "fleur").setScale(0.07);
-        
+        this.fleur1 = this.fleur.create(6900,1700, "fleur").setScale(0.07);
+        this.fleur2 = this.fleur.create(10500,1800, "fleur").setScale(0.07);
+        this.fleur3 = this.fleur.create(4080,80, "fleur").setScale(0.07);
+
         this.physics.add.overlap(this.player, this.fleur, this.collectFleur, null, this);
 
+        //baie
         this.baie = this.physics.add.group();
 
-        
         this.baie1 = this.baie.create(25,1800, "baie").setScale(0.07);
         this.baie2 = this.baie.create(11968,900, "baie").setScale(0.07);
-        
-        
         this.physics.add.overlap(this.player, this.baie, this.collectBaie, null, this);
 
         this.eau = this.physics.add.group();
 
-        
-        this.eau1 = this.eau.create(4000,68, "eau").setScale(0.07);
+        //eau
+        this.eau1 = this.eau.create(4000,2800, "eau").setScale(0.07);
+
         this.physics.add.overlap(this.player, this.eau, this.collectEau, null, this);
         
 
@@ -247,6 +245,7 @@ export class zone_1 extends Phaser.Scene {
         this.physics.add.collider(this.herbe, this.calque_plateforme);
         this.physics.add.collider(this.fleur, this.calque_plateforme);
         this.physics.add.collider(this.baie, this.calque_plateforme);
+        this.physics.add.collider(this.eau, this.calque_plateforme);
         this.physics.add.collider(this.ennemis, this.calque_plateforme);
         
         // clavier 
@@ -548,6 +547,7 @@ export class zone_1 extends Phaser.Scene {
     }
 
     creerPotion(){
+
         this.potion = true
     }
    
